@@ -1,67 +1,60 @@
 
+let playerScore = 0;
+let computerScore = 0;
+
 function getComputerChoice() {
-    const randomValue = Math.random();
-    if (randomValue < 0.33) {
-        return "rock";
-    } else if (randomValue < 0.66) {
-        return "paper";
-    } else {
-        return "scissors";
-    }
+  const choices = ["rock", "paper", "scissors"];
+  const randomIndex = Math.floor(Math.random() * choices.length);
+  return choices[randomIndex];
 }
 
-function getHumanChoice() {
-    let choice = prompt("Please enter your choice (rock, paper, or scissors):");
-    return choice ? choice.toLowerCase() : "rock"; 
+function playRound(playerSelection, computerSelection) {
+
+  if (playerSelection === computerSelection) {
+    return `It's a tie! Both chose ${playerSelection}.`;
+  }
+  if (
+    (playerSelection === "rock" && computerSelection === "scissors") ||
+    (playerSelection === "paper" && computerSelection === "rock") ||
+    (playerSelection === "scissors" && computerSelection === "paper")
+  ) {
+    playerScore++;
+    return `You win! ${playerSelection} beats ${computerSelection}.`;
+  } else {
+    computerScore++;
+    return `You lose! ${computerSelection} beats ${playerSelection}.`;
+  }
 }
 
+const roundResultDiv = document.querySelector("#round-result");
+const scoreBoardDiv = document.querySelector("#score-board");
+const winnerAnnouncement = document.querySelector("#winner-announcement");
+const buttons = document.querySelectorAll("#buttons button");
 
-function playGame() {
-    let humanScore = 0;
-    let computerScore = 0;
-    function playRound(humanChoice, computerChoice) {
-        if (humanChoice === computerChoice) {
-            console.log(`It's a tie! Both chose ${humanChoice}.`);
-            return;
-        }
-
-        if (
-            (humanChoice === "rock" && computerChoice === "scissors") ||
-            (humanChoice === "paper" && computerChoice === "rock") ||
-            (humanChoice === "scissors" && computerChoice === "paper")
-        ) {
-            console.log(`You win! ${humanChoice} beats ${computerChoice}.`);
-            humanScore++;
-        } 
-        else {
-            console.log(`You lose! ${computerChoice} beats ${humanChoice}.`);
-            computerScore++; 
-        }
+buttons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (playerScore >= 5 || computerScore >= 5) {
+      return;
     }
-    console.log("--- The Game has Started! ---");
-    
-    playRound(getHumanChoice(), getComputerChoice());
-    console.log(`Current Score -> You: ${humanScore} | Computer: ${computerScore}\n`);
 
-    playRound(getHumanChoice(), getComputerChoice());
-    console.log(`Current Score -> You: ${humanScore} | Computer: ${computerScore}\n`);
+    const playerSelection = button.id;
+    const computerSelection = getComputerChoice();
+    const resultMessage = playRound(playerSelection, computerSelection);
 
-    playRound(getHumanChoice(), getComputerChoice());
-    console.log(`Current Score -> You: ${humanScore} | Computer: ${computerScore}\n`);
+    roundResultDiv.textContent = resultMessage;
 
-    playRound(getHumanChoice(), getComputerChoice());
-    console.log(`Current Score -> You: ${humanScore} | Computer: ${computerScore}\n`);
+    scoreBoardDiv.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
 
-    playRound(getHumanChoice(), getComputerChoice());
-  
-    console.log(`Final Score -> You: ${humanScore} | Computer: ${computerScore}`);
-    
-    if (humanScore > computerScore) {
-        console.log(" Congratulations! You won the game!");
-    } else if (computerScore > humanScore) {
-        console.log(" The computer won. Better luck next time!");
-    } else {
-        console.log(" The game ended in an overall tie!");
-    }
+    checkWinner();
+  });
+});
+
+function checkWinner() {
+  if (playerScore === 5) {
+    winnerAnnouncement.textContent = "🎉 Congratulations! You won the game!";
+    winnerAnnouncement.style.color = "green";
+  } else if (computerScore === 5) {
+    winnerAnnouncement.textContent = "💻 Game Over! Computer won the game!";
+    winnerAnnouncement.style.color = "red";
+  }
 }
-playGame();
