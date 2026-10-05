@@ -57,4 +57,4 @@ function checkWinner() {
     winnerAnnouncement.textContent = "💻 Game Over! Computer won the game!";
     winnerAnnouncement.style.color = "red";
   }
-}
+} 
